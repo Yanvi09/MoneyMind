@@ -4,8 +4,9 @@ import Navbar from './components/Navbar';
 import Learn from './pages/Learn';
 import Track from './pages/Track';
 import Plan from './pages/Plan';
-import Login from './pages/Login';       // ✅ Added
-import Register from './pages/Register'; // ✅ Added
+import Login from './pages/Login';
+import Register from './pages/Register';
+import PortfolioGenerator from './pages/PortfolioGenerator'; // ✅ Added
 
 function App() {
   return (
@@ -15,8 +16,9 @@ function App() {
         <Route path="/learn" element={<Learn />} />
         <Route path="/track" element={<Track />} />
         <Route path="/plan" element={<Plan />} />
-        <Route path="/login" element={<Login />} />       {/* ✅ Added */}
-        <Route path="/register" element={<Register />} /> {/* ✅ Added */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/portfolio" element={<PortfolioGenerator />} /> {/* ✅ Added */}
       </Routes>
     </Router>
   );
