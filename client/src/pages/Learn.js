@@ -1,3 +1,5 @@
+//AI se puchhne wala page (Ask AI) in Navbar click
+
 import React, { useState } from 'react';
 import axios from 'axios';
 
