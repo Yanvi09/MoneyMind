@@ -1,50 +1,76 @@
-
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 const PlanPage = () => {
-  const [plan, setPlan] = useState({
-    goal: '',
-    amount: '',
-    duration: '',
-    riskLevel: ''
+  const [goal, setGoal] = useState({
+    name: "",
+    amount: "",
+    duration: "",
   });
 
   const handleChange = (e) => {
-    setPlan({ ...plan, [e.target.name]: e.target.value });
+    setGoal({ ...goal, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post('http://localhost:5000/api/plan/save', plan, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const token = localStorage.getItem("token"); // assuming JWT is stored here
+      const response = await axios.post(
+        "http://localhost:5000/api/goals",
+        goal,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-      alert('✅ Plan saved successfully!');
-      setPlan({ goal: '', amount: '', duration: '', riskLevel: '' });
+      );
+
+      alert("Goal saved! 💰");
+      setGoal({ name: "", amount: "", duration: "" });
     } catch (error) {
-      console.error(error);
-      alert('❌ Error saving plan');
+      console.error("Error saving goal:", error);
+      alert("Failed to save goal 😥");
     }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">🧠 Your Investment Plan</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input type="text" name="goal" placeholder="Goal (e.g. Buy a Car)" value={plan.goal} onChange={handleChange} className="border p-2 rounded" required />
-        <input type="number" name="amount" placeholder="Amount to Invest" value={plan.amount} onChange={handleChange} className="border p-2 rounded" required />
-        <input type="text" name="duration" placeholder="Duration (e.g. 5 years)" value={plan.duration} onChange={handleChange} className="border p-2 rounded" required />
-        <select name="riskLevel" value={plan.riskLevel} onChange={handleChange} className="border p-2 rounded" required>
-          <option value="">Select Risk Level</option>
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded">💾 Save Plan</button>
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4 text-center">📈 Your Investment Goal</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          name="name"
+          value={goal.name}
+          onChange={handleChange}
+          placeholder="Goal Name"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          name="amount"
+          value={goal.amount}
+          onChange={handleChange}
+          placeholder="Amount (e.g. 5000)"
+          type="number"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <input
+          name="duration"
+          value={goal.duration}
+          onChange={handleChange}
+          placeholder="Duration in months"
+          type="number"
+          className="w-full p-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
+        >
+          Save Goal
+        </button>
       </form>
     </div>
   );
