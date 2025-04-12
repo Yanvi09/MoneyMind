@@ -11,6 +11,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import PortfolioGenerator from './pages/PortfolioGenerator';
 
+import Dashboard from './pages/Dashboard'; //Dashboard ke liye
+
 function App() {
   return (
     <Router>
@@ -24,6 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/portfolio" element={<PortfolioGenerator />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
