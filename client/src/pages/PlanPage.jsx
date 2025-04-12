@@ -1,3 +1,6 @@
+
+//It's your main user-facing goal form + displays saved goals = CORE Plan Page
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 

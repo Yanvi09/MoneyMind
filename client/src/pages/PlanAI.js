@@ -1,3 +1,5 @@
+//This is your AI investing planner, separate logic and use-case. Will be linked from dashboard or PlanPage
+
 import React, { useState } from 'react';
 import axios from 'axios';
 
