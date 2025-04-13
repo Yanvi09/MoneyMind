@@ -1,113 +1,101 @@
+// src/pages/PlanPage.jsx
 
-//It's your main user-facing goal form + displays saved goals = CORE Plan Page
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PlanPage = () => {
-  const [goal, setGoal] = useState({
-    name: "",
-    amount: "",
-    duration: "",
-  });
-
-  const [goals, setGoals] = useState([]); // for saved goals
-
-  const handleChange = (e) => {
-    setGoal({ ...goal, [e.target.name]: e.target.value });
-  };
-
-  const fetchGoals = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/api/goals", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setGoals(response.data);
-    } catch (error) {
-      console.error("Failed to fetch goals:", error);
-    }
-  };
+  const [amount, setAmount] = useState("");
+  const [duration, setDuration] = useState("");
+  const [risk, setRisk] = useState("low");
+  const [purpose, setPurpose] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    const token = localStorage.getItem("token");
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/goals", goal, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      alert("Goal saved! 🎯");
-      setGoal({ name: "", amount: "", duration: "" });
-      fetchGoals(); // refresh goals
+      await axios.post(
+        "http://localhost:5000/api/goals",
+        { amount, duration, risk, purpose },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Error saving goal:", error);
-      alert("Failed to save goal 😥");
+      console.error("Failed to create goal:", error);
+      alert("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchGoals();
-  }, []);
-
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">📈 Your Investment Goal</h2>
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-lg text-[#002B5B]">
+      <h2 className="text-2xl font-bold mb-6 text-center">🎯 Set Your Investment Goal</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-semibold mb-1">Goal Purpose</label>
+          <input
+            type="text"
+            value={purpose}
+            onChange={(e) => setPurpose(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 shadow-sm"
+            placeholder="e.g., Retirement, Emergency Fund"
+            required
+          />
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-        <input
-          name="name"
-          value={goal.name}
-          onChange={handleChange}
-          placeholder="Goal Name"
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="amount"
-          value={goal.amount}
-          onChange={handleChange}
-          placeholder="Amount"
-          type="number"
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          name="duration"
-          value={goal.duration}
-          onChange={handleChange}
-          placeholder="Duration (months)"
-          type="number"
-          className="w-full p-2 border rounded"
-          required
-        />
+        <div>
+          <label className="block font-semibold mb-1">Amount (₹)</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+            className="w-full border rounded-lg px-3 py-2 shadow-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Duration (in months)</label>
+          <input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(Number(e.target.value))}
+            className="w-full border rounded-lg px-3 py-2 shadow-sm"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Risk Preference</label>
+          <select
+            value={risk}
+            onChange={(e) => setRisk(e.target.value)}
+            className="w-full border rounded-lg px-3 py-2 shadow-sm"
+          >
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
         <button
           type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded w-full hover:bg-green-700"
+          disabled={loading}
+          className="w-full bg-[#002B5B] hover:bg-[#001F3F] text-white font-bold py-2 px-4 rounded-lg shadow-md"
         >
-          Save Goal
+          {loading ? "Setting Goal..." : "Create Goal"}
         </button>
       </form>
-
-      <div>
-        <h3 className="text-xl font-semibold mb-2">🎯 Saved Goals:</h3>
-        {goals.length > 0 ? (
-          <ul className="space-y-2">
-            {goals.map((g) => (
-              <li key={g._id} className="border p-2 rounded shadow-sm">
-                <strong>{g.name}</strong> - ₹{g.amount} over {g.duration} months
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No goals yet. Set your first goal now! 🫶</p>
-        )}
-      </div>
     </div>
   );
 };
